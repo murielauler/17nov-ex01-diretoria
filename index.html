@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ex 01 · Respostas da diretoria</title>
+<style>
+  :root {
+    --laranja: #EF701A; --laranja-claro: #FDE9DA; --marrom: #30251F; --creme: #FFF9F1;
+    --cinza: #755B4A; --linha: #D9CFC6; --erro: #B3261E; --branco: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: clamp(16px, min(1.05vw, 1.75vh), 26px); }
+  html, body { margin: 0; background: var(--creme); color: var(--marrom); font-family: Arial, Helvetica, sans-serif; line-height: 1.45; }
+  body { font-size: 1.0625rem; }
+  main { max-width: 67.5rem; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; margin: 0 auto; padding: 1.75rem 1.5rem 2.5rem; }
+
+  /* topo */
+  .topo { margin-bottom: 1.25rem; }
+  .tag { font-size: 0.75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--laranja); }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-weight: normal; font-size: 2.125rem; line-height: 1.15; margin: 0.625rem 0 0; }
+  h1 em { color: var(--laranja); font-style: normal; }
+
+  /* grade de cartões */
+  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .larga { grid-column: 1 / -1; }
+  .q { background: var(--branco); border: 1px solid var(--linha); border-radius: 1.125rem; padding: 1.125rem 1.5rem 1.375rem; }
+  .q-cab { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .num { flex: none; width: 2rem; height: 2rem; border-radius: 50%; background: var(--laranja-claro); color: var(--laranja); font-family: Georgia, serif; font-size: 1.0625rem; display: flex; align-items: center; justify-content: center; }
+  .num.neutro { background: #F3ECE4; color: var(--cinza); }
+  .q-cab h2 { font-family: Georgia, "Times New Roman", serif; font-weight: normal; font-size: 1.375rem; line-height: 1.2; margin: 0; }
+
+  .cols { display: grid; gap: 1.5rem; align-items: start; }
+  .cols.quem { grid-template-columns: 1fr 1.5fr; }
+  .cols.sacado { grid-template-columns: 1.6fr 1fr; }
+  .rot { display: block; font-weight: normal; font-size: 0.9375rem; color: var(--cinza); margin: 0 0 0.625rem; }
+  .rot .dica { color: #A8968A; }
+
+  input[type=text] {
+    width: 100%; font: inherit; font-size: 1.125rem; color: var(--marrom); background: var(--creme);
+    border: 1px solid var(--linha); border-radius: 0.75rem; padding: 0.75rem 1rem; height: 3.25rem;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+  }
+  input[type=text]::placeholder { color: #B5A598; }
+  input[type=text]:hover { border-color: #C7B8AB; }
+  input[type=text]:focus { outline: none; background: var(--branco); border-color: var(--laranja); box-shadow: 0 0 0 0.25rem rgba(239,112,26,.15); }
+  .unid { position: relative; }
+  .unid input { padding-right: 5.75rem; }
+  .unid b { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--cinza); font-weight: normal; font-size: 1rem; pointer-events: none; }
+  .campo.erro input { border-color: var(--erro); }
+
+  .opcoes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .opcoes label { margin: 0; }
+  .opcoes input { position: absolute; opacity: 0; pointer-events: none; }
+  .opcoes span { display: inline-flex; align-items: center; height: 3.25rem; padding: 0 1.125rem; border: 1px solid var(--linha); border-radius: 62.4375rem; background: var(--creme); cursor: pointer; font-size: 1rem; transition: background .15s, border-color .15s; user-select: none; }
+  .opcoes span:hover { border-color: #C7B8AB; }
+  .opcoes input:checked + span { background: var(--marrom); color: var(--creme); border-color: var(--marrom); }
+  .opcoes input:focus-visible + span { box-shadow: 0 0 0 0.25rem rgba(239,112,26,.25); }
+
+  .aviso { color: var(--erro); font-size: 0.875rem; margin-top: 0.5rem; display: none; }
+  .aviso.on { display: block; }
+
+  /* envio */
+  .envio { display: flex; flex-direction: column; justify-content: center; align-items: stretch; padding: 0 0.5rem; }
+  button { font: inherit; font-weight: bold; border: 0; border-radius: 62.4375rem; padding: 1.125rem 1.75rem; cursor: pointer; }
+  .enviar { background: var(--laranja); color: var(--branco); width: 100%; font-size: 1.1875rem; font-weight: normal; letter-spacing: .01em; transition: transform .1s, box-shadow .15s; box-shadow: 0 0.375rem 1rem rgba(239,112,26,.25); }
+  .enviar:hover { box-shadow: 0 0.5rem 1.25rem rgba(239,112,26,.32); }
+  .enviar:active { transform: translateY(1px); }
+  .enviar:disabled { opacity: .6; cursor: wait; }
+  .msg { margin-top: 0.75rem; color: var(--erro); text-align: center; min-height: 1.2em; }
+
+  .ok { display: none; text-align: center; padding: 6rem 0.5rem; }
+  .ok .check { width: 5.25rem; height: 5.25rem; border-radius: 50%; background: var(--laranja); color: var(--branco); font-size: 2.75rem; line-height: 5.25rem; margin: 0 auto 1.375rem; box-shadow: 0 0.5rem 1.5rem rgba(239,112,26,.3); }
+  .ok h2 { font-family: Georgia, serif; font-weight: normal; font-size: 2.125rem; margin: 0 0 0.625rem; }
+  .ok p { color: var(--cinza); margin: 0; font-size: 1.125rem; }
+  .ok button { background: transparent; color: var(--marrom); border: 1px solid var(--linha); margin-top: 1.75rem; font-weight: normal; font-size: 0.9375rem; padding: 0.75rem 1.375rem; }
+
+  @media (max-width: 820px) {
+    .grade, .cols.quem, .cols.sacado { grid-template-columns: 1fr; }
+    .cols { gap: 1.25rem; }
+    h1 { font-size: 1.75rem; }
+    main { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div id="form-box">
+    <div class="topo">
+      <div class="tag">Ex 01 · Mensalidades</div>
+      <h1>O que o Claude respondeu à <em>diretoria</em>?</h1>
+    </div>
+
+    <form id="f" novalidate>
+      <div class="grade">
+        <section class="q larga">
+          <div class="q-cab"><div class="num neutro">✎</div><h2>Quem está enviando</h2></div>
+          <div class="cols quem">
+            <div class="campo" id="c-nome">
+              <label class="rot" for="nome">Nome <span class="dica">(obrigatório)</span></label>
+              <input id="nome" name="nome" type="text" maxlength="60" autocomplete="off" required>
+              <div class="aviso" id="av-nome">Coloque o seu nome.</div>
+            </div>
+            <div class="campo">
+              <span class="rot">Modelo usado</span>
+              <div class="opcoes">
+                <label><input type="radio" name="modelo" value="Sonnet"><span>Sonnet</span></label>
+                <label><input type="radio" name="modelo" value="Opus"><span>Opus</span></label>
+                <label><input type="radio" name="modelo" value="Haiku"><span>Haiku</span></label>
+                <label><input type="radio" name="modelo" value="Outro"><span>Outro</span></label>
+                <label><input type="radio" name="modelo" value="Não sei"><span>Não sei</span></label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="q">
+          <div class="q-cab"><div class="num">1</div><h2>Qual foi a receita de mensalidades de outubro?</h2></div>
+          <div class="campo" id="c-receita">
+            <label class="rot" for="receita">Valor <span class="dica">em R$ milhões</span></label>
+            <div class="unid"><input id="receita" type="text" inputmode="decimal" placeholder="0,0" data-min="3" data-max="12"><b>R$ mi</b></div>
+            <div class="aviso" id="av-receita"></div>
+          </div>
+        </section>
+
+        <section class="q">
+          <div class="q-cab"><div class="num">2</div><h2>Qual é a inadimplência?</h2></div>
+          <div class="campo" id="c-inadimplencia">
+            <label class="rot" for="inadimplencia">Percentual</label>
+            <div class="unid"><input id="inadimplencia" type="text" inputmode="decimal" placeholder="0,0" data-min="0" data-max="30"><b>%</b></div>
+            <div class="aviso" id="av-inadimplencia"></div>
+          </div>
+        </section>
+
+        <section class="q">
+          <div class="q-cab"><div class="num">3</div><h2>Quantos alunos ativos a escola tem hoje?</h2></div>
+          <div class="campo" id="c-alunos">
+            <label class="rot" for="alunos">Número de alunos</label>
+            <div class="unid"><input id="alunos" type="text" inputmode="numeric" placeholder="0" data-min="400" data-max="800"><b>alunos</b></div>
+            <div class="aviso" id="av-alunos"></div>
+          </div>
+        </section>
+
+        <div class="envio">
+          <button class="enviar" id="btn" type="submit">Enviar resposta</button>
+          <div class="msg" id="msg" role="alert"></div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="ok" id="ok">
+    <div class="check">✓</div>
+    <h2>Resposta enviada</h2>
+    <button type="button" id="outra">Enviar outra resposta</button>
+  </div>
+</main>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  var C = window.EX01, f = document.getElementById("f"), btn = document.getElementById("btn"), msg = document.getElementById("msg");
+  var numericos = ["receita", "inadimplencia", "alunos"];
+  var unidades = { receita: "R$ mi", inadimplencia: "%", alunos: "alunos" };
+  var confirmados = {}; // valor fora da faixa que a pessoa confirmou clicando de novo
+
+  function radio(nome) { var r = f.querySelector('input[name="' + nome + '"]:checked'); return r ? r.value : null; }
+  function texto(id) { var v = document.getElementById(id).value.trim(); return v || null; }
+  function marcar(id, on) { var c = document.getElementById("c-" + id); if (c) c.classList.toggle("erro", on); }
+
+  numericos.forEach(function (id) {
+    document.getElementById(id).addEventListener("input", function () {
+      delete confirmados[id];
+      document.getElementById("av-" + id).classList.remove("on");
+      marcar(id, false);
+    });
+  });
+  document.getElementById("nome").addEventListener("input", function () { document.getElementById("av-nome").classList.remove("on"); marcar("nome", false); });
+
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    msg.textContent = "";
+    var ok = true, primeiro = null;
+    var dados = {
+      turma: C.turma,
+      nome: texto("nome"),
+      modelo: radio("modelo"),
+    };
+    if (!dados.nome) { ok = false; primeiro = primeiro || "nome"; document.getElementById("av-nome").classList.add("on"); marcar("nome", true); }
+
+    numericos.forEach(function (id) {
+      var el = document.getElementById(id), av = document.getElementById("av-" + id);
+      var bruto = el.value.trim(), n = C.numero(bruto);
+      dados[id] = null;
+      if (!bruto) return;
+      if (n === null) {
+        av.textContent = "Não entendi esse número. Use só algarismos e vírgula, por exemplo 12,3.";
+        av.classList.add("on"); marcar(id, true); ok = false; primeiro = primeiro || id; return;
+      }
+      var min = +el.dataset.min, max = +el.dataset.max;
+      if ((n < min || n > max) && confirmados[id] !== n) {
+        av.textContent = "Esse valor está fora do esperado (" + min + " a " + max + " " + unidades[id] + "). Confira a unidade. Se o Claude respondeu isso mesmo, clique em Enviar de novo.";
+        av.classList.add("on"); marcar(id, true); confirmados[id] = n; ok = false; primeiro = primeiro || id; return;
+      }
+      dados[id] = n;
+    });
+
+    if (!ok) { var el1 = document.getElementById(primeiro); el1.scrollIntoView({ block: "center", behavior: "smooth" }); el1.focus({ preventScroll: true }); return; }
+
+    btn.disabled = true; btn.textContent = "Enviando…";
+    fetch(C.url + "/rest/v1/" + C.tabela, {
+      method: "POST",
+      headers: { "apikey": C.key, "Content-Type": "application/json", "Prefer": "return=minimal" },
+      body: JSON.stringify(dados),
+    }).then(function (r) {
+      if (!r.ok) return r.text().then(function (t) { throw new Error(t || r.status); });
+      document.getElementById("form-box").style.display = "none";
+      document.getElementById("ok").style.display = "block";
+      window.scrollTo(0, 0);
+    }).catch(function (err) {
+      console.error(err);
+      msg.textContent = "Não consegui enviar. Verifique a internet e tente de novo.";
+    }).finally(function () {
+      btn.disabled = false; btn.textContent = "Enviar resposta";
+    });
+  });
+
+  document.getElementById("outra").addEventListener("click", function () {
+    f.reset(); confirmados = {};
+    document.getElementById("ok").style.display = "none";
+    document.getElementById("form-box").style.display = "block";
+    window.scrollTo(0, 0);
+    document.getElementById("nome").focus();
+  });
+})();
+</script>
+</body>
+</html>

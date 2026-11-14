@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ex 01 · Telão · Mensalidades</title>
+<style>
+  :root {
+    --laranja: #EF701A; --marrom: #30251F; --creme: #FFF9F1;
+    --cinza: #755B4A; --suave: #A8968A; --linha: #E6DCD2; --linha-forte: #D9CFC6;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--creme); color: var(--marrom); font-family: Arial, Helvetica, sans-serif; font-weight: normal; }
+  body { display: grid; grid-template-rows: auto 1fr; padding: 4.5vh 4vw 5vh; gap: 3.5vh; min-height: 100vh; }
+
+  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 3vw; }
+  .tag { font-size: clamp(11px, .85vw, 18px); letter-spacing: .18em; text-transform: uppercase; color: var(--laranja); }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-weight: normal; font-size: clamp(24px, 2.7vw, 64px); letter-spacing: -.01em; margin: 1.2vh 0 0; line-height: 1.1; }
+  h1 em { color: var(--laranja); font-style: italic; }
+  .contador { text-align: right; line-height: 1; }
+  .contador b { display: block; font-family: Georgia, serif; font-weight: normal; font-size: clamp(40px, 5.4vw, 128px); letter-spacing: -.02em; }
+  .contador span { display: block; margin-top: .6vh; font-size: clamp(11px, .85vw, 18px); letter-spacing: .18em; text-transform: uppercase; color: var(--suave); }
+
+  .grade { display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr; column-gap: 4vw; row-gap: 4vh; min-height: 0; }
+  .bloco { border-top: 1px solid var(--linha-forte); padding-top: 1.8vh; display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+  .lado { grid-column: 3; grid-row: 1 / span 2; }
+  .bloco h2 { font-family: Georgia, serif; font-weight: normal; font-size: clamp(17px, 1.65vw, 38px); margin: 0; line-height: 1.15; display: flex; align-items: baseline; gap: .6em; }
+  .bloco h2 small { font-family: Arial, sans-serif; font-size: .5em; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+  .faixa { font-size: clamp(13px, 1.1vw, 24px); color: var(--cinza); margin-top: .9vh; min-height: 1.3em; }
+  .faixa .c { color: var(--laranja); }
+  .plot { flex: 1; min-height: 110px; position: relative; margin-top: 1vh; }
+  .plot svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .vazio { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--suave); font-family: Georgia, serif; font-style: italic; font-size: clamp(13px, 1.05vw, 20px); }
+
+  .lista { list-style: none; margin: 2.4vh 0 0; padding: 0; display: grid; gap: 2.2vh; }
+  .lista li { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: .8vh 1vw; font-size: clamp(13px, 1.15vw, 26px); }
+  .lista .rot { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lista .n { font-family: Georgia, serif; font-size: 1.15em; font-variant-numeric: tabular-nums; }
+  .lista .trilho { grid-column: 1 / -1; height: 3px; background: var(--linha); border-radius: 2px; overflow: hidden; }
+  .lista .barra { height: 100%; background: var(--marrom); transition: width .6s ease; }
+  .lista li.certo .rot, .lista li.certo .n { color: var(--laranja); }
+  .lista li.certo .barra { background: var(--laranja); }
+  .lista li.vazio-l { color: var(--suave); font-family: Georgia, serif; font-style: italic; }
+
+  .controles { position: fixed; right: 4vw; bottom: 1.6vh; display: flex; align-items: center; gap: 1.6vw; font-size: clamp(11px, .8vw, 16px); color: var(--suave); opacity: .55; transition: opacity .2s; }
+  .controles:hover { opacity: 1; }
+  .controles button { font: inherit; color: inherit; background: none; border: 0; padding: 4px 0; cursor: pointer; letter-spacing: .08em; text-transform: uppercase; }
+  .controles button:hover { color: var(--marrom); }
+  .controles button.on { color: var(--laranja); }
+  .status i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #6FA07F; margin-right: .5em; vertical-align: 1px; }
+  .status.off i { background: #C0523F; }
+
+  .qr { position: fixed; inset: 0; background: var(--creme); display: none; align-items: center; justify-content: center; z-index: 10; cursor: pointer; }
+  .qr.on { display: flex; }
+  .qr .caixa { text-align: center; }
+  .qr h2 { font-family: Georgia, serif; font-weight: normal; font-size: clamp(24px, 3vw, 60px); margin: 0 0 4vh; }
+  .qr #qrcode { display: inline-block; }
+  .qr #qrcode img, .qr #qrcode canvas { width: min(56vh, 70vw) !important; height: min(56vh, 70vw) !important; }
+  .qr .link { font-size: clamp(13px, 1.3vw, 26px); margin-top: 4vh; color: var(--cinza); letter-spacing: .02em; }
+
+  @media (max-width: 900px) {
+    body { height: auto; }
+    .grade { grid-template-columns: 1fr; grid-template-rows: none; }
+    .lado { grid-column: auto; grid-row: auto; }
+    .bloco { height: 280px; }
+    .lado { height: auto; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="tag">Ex 01 · Mensalidades</div>
+    <h1>Mesma base, mesmas perguntas. <em>Quantas respostas?</em></h1>
+  </div>
+  <div class="contador"><b id="total">0</b><span>respostas</span></div>
+</header>
+
+<div class="grade">
+  <div class="bloco" id="p-receita"><h2>Receita de outubro <small>R$ mi</small></h2><div class="faixa"></div><div class="plot"></div></div>
+  <div class="bloco" id="p-inadimplencia"><h2>Inadimplência <small>%</small></h2><div class="faixa"></div><div class="plot"></div></div>
+  <div class="bloco" id="p-alunos"><h2>Alunos ativos <small>alunos</small></h2><div class="faixa"></div><div class="plot"></div></div>
+</div>
+
+<div class="controles">
+  <span class="status" id="status"><i></i>ao vivo</span>
+  <button id="revelar" title="Atalho: R">Revelar gabarito</button>
+  <button id="btn-qr" title="Atalho: Q">QR</button>
+</div>
+
+<div class="qr" id="qr">
+  <div class="caixa">
+    <h2>Envie a sua resposta</h2>
+    <div id="qrcode"></div>
+    <div class="link" id="qr-link"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script>
+(function () {
+  var C = window.EX01;
+  var NS = "http://www.w3.org/2000/svg";
+  var COR = { marrom: "#30251F", laranja: "#EF701A", suave: "#A8968A", apagado: "#CDBFB3", linha: "#D9CFC6" };
+  var COMITE = { receita: 6.92, inadimplencia: 7.2, alunos: 612 };
+  var TOL = { receita: 0.06, inadimplencia: 0.06, alunos: 0.5 };
+  var CASAS = { receita: 2, inadimplencia: 1, alunos: 0 };
+  var METRICAS = [
+    { id: "receita", minSpan: 2 },
+    { id: "inadimplencia", minSpan: 4 },
+    { id: "alunos", minSpan: 40 },
+  ];
+  var revelado = false, dados = [];
+  var linkForm = new URL("./?turma=" + encodeURIComponent(C.turma), location.href).href;
+
+  function svgEl(tag, at, pai) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in at) e.setAttribute(k, at[k]);
+    if (pai) pai.appendChild(e);
+    return e;
+  }
+  function passoBonito(amp, nTicks) {
+    var bruto = amp / nTicks, p = Math.pow(10, Math.floor(Math.log10(bruto))), r = bruto / p;
+    return (r < 1.5 ? 1 : r < 3.5 ? 2 : r < 7.5 ? 5 : 10) * p;
+  }
+  function bate(v, id) { return Math.abs(v - COMITE[id]) <= TOL[id] + 1e-9; }
+
+  // ---------- gráfico de pontos ----------
+  function desenharPontos(m) {
+    var bloco = document.getElementById("p-" + m.id), plot = bloco.querySelector(".plot"), faixaEl = bloco.querySelector(".faixa");
+    var vals = dados.map(function (d) { return d[m.id]; }).filter(function (v) { return v !== null && v !== undefined; }).map(Number).sort(function (a, b) { return a - b; });
+    plot.innerHTML = "";
+    if (!vals.length) { faixaEl.textContent = ""; plot.innerHTML = '<div class="vazio">aguardando respostas</div>'; return; }
+
+    var mn = vals[0], mx = vals[vals.length - 1];
+    var acertos = vals.filter(function (v) { return bate(v, m.id); }).length;
+    var cs = m.id === "alunos" ? 0 : 1;
+    var txt = mn === mx ? C.fmt(mn, cs) : C.fmt(mn, cs) + " a " + C.fmt(mx, cs);
+    faixaEl.innerHTML = txt + (revelado ? ' <span class="c">· ' + acertos + " de " + vals.length + " bateram com o gabarito</span>" : "");
+
+    var W = plot.clientWidth, H = plot.clientHeight;
+    if (W < 50 || H < 50) return;
+    var vw = window.innerWidth;
+    var fs = Math.max(12, Math.min(22, vw * 0.0105));
+    var mL = 2, mR = 2, mT = fs * 2.4, mB = fs * 2.4;
+    // eixo ajustado aos dados + linha do comitê (incluída desde o início para o eixo não pular ao revelar)
+    var lo = Math.min(mn, COMITE[m.id]), hi = Math.max(mx, COMITE[m.id]);
+    if (hi - lo < m.minSpan) { var meio = (lo + hi) / 2; lo = meio - m.minSpan / 2; hi = meio + m.minSpan / 2; }
+    var pad = (hi - lo) * 0.14; lo -= pad; hi += pad;
+    if (lo < 0 && mn >= 0) { hi -= lo; lo = 0; }
+    var x = function (v) { return mL + (v - lo) / (hi - lo) * (W - mL - mR); };
+    var base = H - mB;
+
+    var svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img" }, plot);
+
+    svgEl("line", { x1: mL, x2: W - mR, y1: base + 0.5, y2: base + 0.5, stroke: COR.linha, "stroke-width": 1 }, svg);
+    var passo = passoBonito(hi - lo, Math.max(3, Math.min(6, Math.floor(W / (fs * 6)))));
+    for (var t = Math.ceil(lo / passo - 1e-9) * passo; t <= hi + 1e-9; t += passo) {
+      var lb = svgEl("text", { x: x(t), y: base + fs * 1.6, "text-anchor": "middle", "font-size": fs, fill: COR.suave, "font-family": "Arial" }, svg);
+      lb.textContent = C.fmt(t, passo < 1 ? 1 : 0);
+    }
+
+    var r = Math.max(3, Math.min(vw * 0.0048, 10, H * 0.04));
+    var pos;
+    for (var tent = 0; tent < 8; tent++) {
+      pos = []; var estourou = false;
+      vals.forEach(function (v) {
+        var cx = x(v), cy = base - r - 3;
+        for (var k = 0; k < 400; k++) {
+          var colide = pos.some(function (p) { var dx = p.cx - cx, dy = p.cy - cy; var g = 2 * r + Math.max(1.5, r * 0.35); return dx * dx + dy * dy < g * g; });
+          if (!colide) break;
+          cy -= r * 0.5;
+        }
+        if (cy - r < mT) estourou = true;
+        pos.push({ cx: cx, cy: cy, v: v });
+      });
+      if (!estourou || r <= 3.5) break;
+      r *= 0.82;
+    }
+
+    if (revelado) {
+      var cxC = x(COMITE[m.id]);
+      svgEl("line", { x1: cxC, x2: cxC, y1: mT - fs * 0.4, y2: base, stroke: COR.laranja, "stroke-width": 1.5, "stroke-dasharray": "3 5", "stroke-linecap": "round" }, svg);
+    }
+
+    pos.forEach(function (p) {
+      var certo = revelado && bate(p.v, m.id);
+      var c = svgEl("circle", { cx: p.cx, cy: p.cy, r: r, fill: certo ? COR.laranja : revelado ? COR.apagado : COR.marrom }, svg);
+      svgEl("title", {}, c).textContent = C.fmt(p.v, CASAS[m.id]);
+    });
+
+    if (revelado) {
+      var anc = cxC < W * 0.15 ? "start" : cxC > W * 0.85 ? "end" : "middle";
+      var ct = svgEl("text", { x: cxC, y: mT - fs * 0.9, "text-anchor": anc, "font-size": fs * 1.05, fill: COR.laranja, "font-family": "Arial",
+        stroke: "#FFF9F1", "stroke-width": fs * 0.45, "stroke-linejoin": "round", "paint-order": "stroke" }, svg);
+      ct.textContent = "gabarito " + C.fmt(COMITE[m.id], CASAS[m.id]);
+    }
+  }
+
+  function desenharTudo() {
+    document.getElementById("total").textContent = dados.length;
+    METRICAS.forEach(desenharPontos);
+  }
+
+  // ---------- dados ao vivo ----------
+  var assinatura = "", statusEl = document.getElementById("status");
+  function buscar() {
+    var u = C.url + "/rest/v1/" + C.tabela + "?select=id,receita,inadimplencia,alunos&turma=eq." + encodeURIComponent(C.turma) + "&order=id.asc&limit=1000";
+    fetch(u, { headers: { apikey: C.key }, cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (json) {
+        statusEl.className = "status"; statusEl.innerHTML = "<i></i>ao vivo";
+        var nova = json.map(function (d) { return d.id; }).join(",");
+        if (nova !== assinatura) { assinatura = nova; dados = json; desenharTudo(); }
+      })
+      .catch(function (e) {
+        console.error(e);
+        statusEl.className = "status off"; statusEl.innerHTML = "<i></i>sem conexão";
+      });
+  }
+  desenharTudo();
+  buscar();
+  setInterval(buscar, 3000);
+
+  var tm; window.addEventListener("resize", function () { clearTimeout(tm); tm = setTimeout(desenharTudo, 120); });
+
+  // ---------- controles ----------
+  var btnRev = document.getElementById("revelar");
+  function alternarRevelar() {
+    revelado = !revelado;
+    btnRev.classList.toggle("on", revelado);
+    btnRev.textContent = revelado ? "Esconder gabarito" : "Revelar gabarito";
+    desenharTudo();
+  }
+  btnRev.addEventListener("click", alternarRevelar);
+
+  var qr = document.getElementById("qr"), qrFeito = false;
+  function alternarQR() {
+    if (!qrFeito) {
+      document.getElementById("qr-link").textContent = linkForm.replace(/^https?:\/\//, "");
+      if (window.QRCode) new QRCode(document.getElementById("qrcode"), { text: linkForm, width: 512, height: 512, colorDark: "#30251F", colorLight: "#FFF9F1", correctLevel: QRCode.CorrectLevel.M });
+      qrFeito = true;
+    }
+    qr.classList.toggle("on");
+  }
+  document.getElementById("btn-qr").addEventListener("click", alternarQR);
+  qr.addEventListener("click", alternarQR);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "r" || e.key === "R") alternarRevelar();
+    if (e.key === "q" || e.key === "Q") alternarQR();
+    if (e.key === "Escape" && qr.classList.contains("on")) alternarQR();
+  });
+})();
+</script>
+</body>
+</html>
