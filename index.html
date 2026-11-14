@@ -133,11 +133,11 @@
         </section>
 
         <section class="q">
-          <div class="q-cab"><div class="num">3</div><h2>Quantos alunos ativos a escola tem hoje?</h2></div>
-          <div class="campo" id="c-alunos">
-            <label class="rot" for="alunos">Número de alunos</label>
-            <div class="unid"><input id="alunos" type="text" inputmode="numeric" placeholder="0" data-min="400" data-max="800"><b>alunos</b></div>
-            <div class="aviso" id="av-alunos"></div>
+          <div class="q-cab"><div class="num">3</div><h2>Quantas famílias estão inadimplentes?</h2></div>
+          <div class="campo" id="c-familias">
+            <label class="rot" for="familias">Número de famílias</label>
+            <div class="unid"><input id="familias" type="text" inputmode="numeric" placeholder="0" data-min="5" data-max="300"><b>famílias</b></div>
+            <div class="aviso" id="av-familias"></div>
           </div>
         </section>
 
@@ -160,8 +160,8 @@
 <script>
 (function () {
   var C = window.EX01, f = document.getElementById("f"), btn = document.getElementById("btn"), msg = document.getElementById("msg");
-  var numericos = ["receita", "inadimplencia", "alunos"];
-  var unidades = { receita: "R$ mi", inadimplencia: "%", alunos: "alunos" };
+  var numericos = ["receita", "inadimplencia", "familias"];
+  var unidades = { receita: "R$ mi", inadimplencia: "%", familias: "famílias" };
   var confirmados = {}; // valor fora da faixa que a pessoa confirmou clicando de novo
 
   function radio(nome) { var r = f.querySelector('input[name="' + nome + '"]:checked'); return r ? r.value : null; }
