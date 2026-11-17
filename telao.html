@@ -77,9 +77,9 @@
 </header>
 
 <div class="grade">
-  <div class="bloco" id="p-receita"><h2>Receita de outubro <small>R$ mi</small></h2><div class="faixa"></div><div class="plot"></div></div>
+  <div class="bloco" id="p-alunos"><h2>Alunos ativos <small>alunos</small></h2><div class="faixa"></div><div class="plot"></div></div>
+  <div class="bloco" id="p-receita"><h2>Faturamento de outubro <small>R$ mi</small></h2><div class="faixa"></div><div class="plot"></div></div>
   <div class="bloco" id="p-inadimplencia"><h2>Inadimplência <small>%</small></h2><div class="faixa"></div><div class="plot"></div></div>
-  <div class="bloco" id="p-previsao"><h2>Previsão de novembro <small>R$ mi</small></h2><div class="faixa"></div><div class="plot"></div></div>
 </div>
 
 <div class="controles">
@@ -103,13 +103,13 @@
   var C = window.EX01;
   var NS = "http://www.w3.org/2000/svg";
   var COR = { marrom: "#30251F", laranja: "#EF701A", suave: "#A8968A", apagado: "#CDBFB3", linha: "#D9CFC6" };
-  var COMITE = { receita: 7.14, inadimplencia: 5.5, previsao: 6.5 };
-  var TOL = { receita: 0.06, inadimplencia: 0.06, previsao: 0.06 };
-  var CASAS = { receita: 2, inadimplencia: 1, previsao: 2 };
+  var COMITE = { alunos: 601, receita: 6.86, inadimplencia: 5.9 };
+  var TOL = { alunos: 0.5, receita: 0.06, inadimplencia: 0.06 };
+  var CASAS = { alunos: 0, receita: 2, inadimplencia: 1 };
   var METRICAS = [
+    { id: "alunos", minSpan: 40 },
     { id: "receita", minSpan: 2 },
     { id: "inadimplencia", minSpan: 4 },
-    { id: "previsao", minSpan: 2 },
   ];
   var revelado = false, dados = [];
   var linkForm = new URL("./?turma=" + encodeURIComponent(C.turma), location.href).href;
@@ -135,7 +135,7 @@
 
     var mn = vals[0], mx = vals[vals.length - 1];
     var acertos = vals.filter(function (v) { return bate(v, m.id); }).length;
-    var cs = 1;
+    var cs = m.id === "alunos" ? 0 : m.id === "receita" ? 2 : 1;
     var txt = mn === mx ? C.fmt(mn, cs) : C.fmt(mn, cs) + " a " + C.fmt(mx, cs);
     faixaEl.innerHTML = txt + (revelado ? ' <span class="c">· ' + acertos + " de " + vals.length + " bateram com o gabarito</span>" : "");
 
@@ -206,7 +206,7 @@
   // ---------- dados ao vivo ----------
   var assinatura = "", statusEl = document.getElementById("status");
   function buscar() {
-    var u = C.url + "/rest/v1/" + C.tabela + "?select=id,receita,inadimplencia,previsao&turma=eq." + encodeURIComponent(C.turma) + "&order=id.asc&limit=1000";
+    var u = C.url + "/rest/v1/" + C.tabela + "?select=id,alunos,receita,inadimplencia&turma=eq." + encodeURIComponent(C.turma) + "&order=id.asc&limit=1000";
     fetch(u, { headers: { apikey: C.key }, cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (json) {

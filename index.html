@@ -115,29 +115,29 @@
         </section>
 
         <section class="q">
-          <div class="q-cab"><div class="num">1</div><h2>Qual foi a nossa receita de outubro?</h2></div>
+          <div class="q-cab"><div class="num">1</div><h2>Quantos alunos ativos temos hoje?</h2></div>
+          <div class="campo" id="c-alunos">
+            <label class="rot" for="alunos">Número de alunos</label>
+            <div class="unid"><input id="alunos" type="text" inputmode="numeric" placeholder="0" data-min="300" data-max="900"><b>alunos</b></div>
+            <div class="aviso" id="av-alunos"></div>
+          </div>
+        </section>
+
+        <section class="q">
+          <div class="q-cab"><div class="num">2</div><h2>Quanto faturamos de mensalidades em outubro?</h2></div>
           <div class="campo" id="c-receita">
-            <label class="rot" for="receita">Valor <span class="dica">em R$ milhões</span></label>
-            <div class="unid"><input id="receita" type="text" inputmode="decimal" placeholder="0,0" data-min="3" data-max="12"><b>R$ mi</b></div>
+            <label class="rot" for="receita">Valor <span class="dica">em R$ milhões, por exemplo 5,25</span></label>
+            <div class="unid"><input id="receita" type="text" inputmode="decimal" placeholder="0,00" data-min="3" data-max="12"><b>R$ mi</b></div>
             <div class="aviso" id="av-receita"></div>
           </div>
         </section>
 
         <section class="q">
-          <div class="q-cab"><div class="num">2</div><h2>Qual é a inadimplência?</h2></div>
+          <div class="q-cab"><div class="num">3</div><h2>Qual é a nossa inadimplência?</h2></div>
           <div class="campo" id="c-inadimplencia">
-            <label class="rot" for="inadimplencia">Percentual</label>
+            <label class="rot" for="inadimplencia">Percentual <span class="dica">por exemplo 4,5</span></label>
             <div class="unid"><input id="inadimplencia" type="text" inputmode="decimal" placeholder="0,0" data-min="0" data-max="30"><b>%</b></div>
             <div class="aviso" id="av-inadimplencia"></div>
-          </div>
-        </section>
-
-        <section class="q">
-          <div class="q-cab"><div class="num">3</div><h2>Quanto vamos fechar novembro em recebimento?</h2></div>
-          <div class="campo" id="c-previsao">
-            <label class="rot" for="previsao">Previsão <span class="dica">em R$ milhões</span></label>
-            <div class="unid"><input id="previsao" type="text" inputmode="decimal" placeholder="0,0" data-min="3" data-max="12"><b>R$ mi</b></div>
-            <div class="aviso" id="av-previsao"></div>
           </div>
         </section>
 
@@ -160,8 +160,8 @@
 <script>
 (function () {
   var C = window.EX01, f = document.getElementById("f"), btn = document.getElementById("btn"), msg = document.getElementById("msg");
-  var numericos = ["receita", "inadimplencia", "previsao"];
-  var unidades = { receita: "R$ mi", inadimplencia: "%", previsao: "R$ mi" };
+  var numericos = ["alunos", "receita", "inadimplencia"];
+  var unidades = { alunos: "alunos", receita: "R$ mi", inadimplencia: "%" };
   var confirmados = {}; // valor fora da faixa que a pessoa confirmou clicando de novo
 
   function radio(nome) { var r = f.querySelector('input[name="' + nome + '"]:checked'); return r ? r.value : null; }
