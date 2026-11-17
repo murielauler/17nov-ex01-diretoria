@@ -133,11 +133,11 @@
         </section>
 
         <section class="q">
-          <div class="q-cab"><div class="num">3</div><h2>Quantas famílias estão inadimplentes?</h2></div>
-          <div class="campo" id="c-familias">
-            <label class="rot" for="familias">Número de famílias</label>
-            <div class="unid"><input id="familias" type="text" inputmode="numeric" placeholder="0" data-min="5" data-max="300"><b>famílias</b></div>
-            <div class="aviso" id="av-familias"></div>
+          <div class="q-cab"><div class="num">3</div><h2>Quanto vamos fechar novembro em recebimento?</h2></div>
+          <div class="campo" id="c-previsao">
+            <label class="rot" for="previsao">Previsão <span class="dica">em R$ milhões</span></label>
+            <div class="unid"><input id="previsao" type="text" inputmode="decimal" placeholder="0,0" data-min="3" data-max="12"><b>R$ mi</b></div>
+            <div class="aviso" id="av-previsao"></div>
           </div>
         </section>
 
@@ -160,8 +160,8 @@
 <script>
 (function () {
   var C = window.EX01, f = document.getElementById("f"), btn = document.getElementById("btn"), msg = document.getElementById("msg");
-  var numericos = ["receita", "inadimplencia", "familias"];
-  var unidades = { receita: "R$ mi", inadimplencia: "%", familias: "famílias" };
+  var numericos = ["receita", "inadimplencia", "previsao"];
+  var unidades = { receita: "R$ mi", inadimplencia: "%", previsao: "R$ mi" };
   var confirmados = {}; // valor fora da faixa que a pessoa confirmou clicando de novo
 
   function radio(nome) { var r = f.querySelector('input[name="' + nome + '"]:checked'); return r ? r.value : null; }
